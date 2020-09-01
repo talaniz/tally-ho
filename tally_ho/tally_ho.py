@@ -1,4 +1,5 @@
 """Main module."""
+from collections import namedtuple
 import sqlite3
 
 
@@ -31,3 +32,13 @@ class TallyHo(object):
         c.execute(
             '''insert into tally(name, category, count) values (?, ?, ?)''', (item, category_id, 1,))
         conn.commit()
+
+    def get_tally(self, tally_name):
+        """Retrieve a tally record"""
+        Tally = namedtuple("Tally", "id name category count")
+        conn = sqlite3.connect(self.db)
+        c = conn.cursor()
+        c.execute("SELECT * FROM tally WHERE name='%s'" % tally_name)
+        record = c.fetchone()
+        tally = Tally(*record)
+        return tally

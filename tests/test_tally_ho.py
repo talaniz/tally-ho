@@ -12,8 +12,8 @@ class TestTally_ho(unittest.TestCase):
     """Tests for `tally_ho` package."""
 
     def create_category(self, category, db_name):
-        tally = tally_ho.TallyHo(db_name)
-        tally.create_category(category)
+        th = tally_ho.TallyHo(db_name)
+        th.create_category(category)
 
     def tearDown(self):
         os.remove('test.db')
@@ -36,8 +36,8 @@ class TestTally_ho(unittest.TestCase):
         """Creates a tally item under a category"""
 
         self.create_category("bugs", "test.db")
-        tally = tally_ho.TallyHo("test.db")
-        tally.create_tally("bugs", "stuck deployments")
+        th = tally_ho.TallyHo("test.db")
+        th.create_tally("bugs", "stuck deployments")
 
         conn = sqlite3.connect('test.db')
         c = conn.cursor()
@@ -51,3 +51,15 @@ class TestTally_ho(unittest.TestCase):
         self.assertEqual(len(records), 1)
         self.assertEqual(tally_name, 'stuck deployments')
         self.assertEqual(tally_count, 1)
+
+    def test_get_tally(self):
+        """Increments a tally by one"""
+        self.create_category("bugs", "test.db")
+        th = tally_ho.TallyHo("test.db")
+        th.create_tally("bugs", "stuck deployments")
+
+        tally = th.get_tally("stuck deployments")
+        self.assertEqual(tally.id, 1)
+        self.assertEqual(tally.name, "stuck deployments")
+        self.assertEqual(tally.category, 1)
+        self.assertEqual(tally.count, 1)
