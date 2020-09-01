@@ -12,8 +12,8 @@ class TestTally_ho(unittest.TestCase):
     """Tests for `tally_ho` package."""
 
     def create_category(self, category, db_name):
-        tally = tally_ho.TallyHo()
-        tally.create_category("bugs", "test.db")
+        tally = tally_ho.TallyHo(db_name)
+        tally.create_category(category)
 
     def tearDown(self):
         os.remove('test.db')
@@ -36,8 +36,8 @@ class TestTally_ho(unittest.TestCase):
         """Creates a tally item under a category"""
 
         self.create_category("bugs", "test.db")
-        tally = tally_ho.TallyHo()
-        tally.create_tally("bugs", "stuck deployments", "test.db")
+        tally = tally_ho.TallyHo("test.db")
+        tally.create_tally("bugs", "stuck deployments")
 
         conn = sqlite3.connect('test.db')
         c = conn.cursor()

@@ -5,19 +5,21 @@ import sqlite3
 class TallyHo(object):
     """An object to track tallies."""
 
-    def create_category(self, category, db_name):
+    def __init__(self, db_name):
+        self.db = db_name
+
+    def create_category(self, category):
         """Create a category"""
-        conn = sqlite3.connect(db_name)
+        conn = sqlite3.connect(self.db)
         c = conn.cursor()
         c.execute('CREATE TABLE categories (id integer primary key, name varchar)')
         c.execute("insert into categories(name) values (?)", (category,))
         conn.commit()
         c.close()
-        print("Category: {} created\n".format(category))
 
-    def create_tally(self, category, item, db_name):
+    def create_tally(self, category, item):
         """Create a tally item under a category."""
-        conn = sqlite3.connect(db_name)
+        conn = sqlite3.connect(self.db)
         c = conn.cursor()
         c.execute('''CREATE TABLE tally
         (id integer primary key, name varchar, category integer, count integer,
@@ -29,4 +31,3 @@ class TallyHo(object):
         c.execute(
             '''insert into tally(name, category, count) values (?, ?, ?)''', (item, category_id, 1,))
         conn.commit()
-        print("Created tally '{}' under '{}'\nCurrent tally: 1".format(item, category))
