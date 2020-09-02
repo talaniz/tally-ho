@@ -70,5 +70,13 @@ class TestTally_ho(unittest.TestCase):
         tally = th.create_tally("bugs", "stuck deployments")
 
         th.delete_tally("bugs", "stuck deployments")
-        tally = th.get_tally("stuck deplloyments")
+        tally = th.get_tally("stuck deployments")
         self.assertEqual(tally, '')
+
+    def test_get_category(self):
+        self.create_category("bugs", "test.db")
+        th = tally_ho.TallyHo("test.db")
+
+        category = th.get_category("bugs")
+        self.assertEqual(category.id, 1)
+        self.assertEqual(category.name, "bugs")
