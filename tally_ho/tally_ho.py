@@ -2,6 +2,8 @@
 from collections import namedtuple
 import sqlite3
 
+Tally = namedtuple("Tally", "id name category count")
+
 
 class TallyHo(object):
     """An object to track tallies."""
@@ -35,10 +37,20 @@ class TallyHo(object):
 
     def get_tally(self, tally_name):
         """Retrieve a tally record"""
-        Tally = namedtuple("Tally", "id name category count")
         conn = sqlite3.connect(self.db)
         c = conn.cursor()
         c.execute("SELECT * FROM tally WHERE name='%s'" % tally_name)
         record = c.fetchone()
         tally = Tally(*record)
         return tally
+
+    def update_tally(self, tally_name, interval):
+        """Increase or decrease count on a tally."""
+        tally = self.get_tally(tally_name)
+        count = tally.count + interval
+        conn = sqlite3.connect(self.db)
+        c = conn.cursor()
+        c.execute("""UPDATE tally SET count = ? where id= ?""",
+                  (count, tally.id,))
+        conn.commit()
+        return self.get_tally(tally_name)

@@ -53,7 +53,6 @@ class TestTally_ho(unittest.TestCase):
         self.assertEqual(tally_count, 1)
 
     def test_get_tally(self):
-        """Increments a tally by one"""
         self.create_category("bugs", "test.db")
         th = tally_ho.TallyHo("test.db")
         th.create_tally("bugs", "stuck deployments")
@@ -63,3 +62,17 @@ class TestTally_ho(unittest.TestCase):
         self.assertEqual(tally.name, "stuck deployments")
         self.assertEqual(tally.category, 1)
         self.assertEqual(tally.count, 1)
+
+    def test_update_tally(self):
+        self.create_category("bugs", "test.db")
+        th = tally_ho.TallyHo("test.db")
+        th.create_tally("bugs", "stuck deployments")
+
+        tally = th.get_tally("stuck deployments")
+        self.assertEqual(tally.id, 1)
+        self.assertEqual(tally.name, "stuck deployments")
+        self.assertEqual(tally.category, 1)
+        self.assertEqual(tally.count, 1)
+
+        tally = th.update_tally("stuck deployments", 1)
+        self.assertEqual(tally.count, 2)
