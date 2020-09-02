@@ -1,4 +1,4 @@
-"""Main module."""
+"""This module is the transaction interface between the cli and the database."""
 from collections import namedtuple
 import sqlite3
 
@@ -46,8 +46,11 @@ class TallyHo(object):
         c = conn.cursor()
         c.execute("SELECT * FROM tally WHERE name='%s'" % tally_name)
         record = c.fetchone()
-        tally = Tally(*record)
-        return tally
+
+        if record:
+            tally = Tally(*record)
+            return tally
+        return ''
 
     def update_tally(self, tally_name, interval):
         """Increase or decrease count on a tally."""
@@ -59,3 +62,9 @@ class TallyHo(object):
                   (count, tally.id,))
         conn.commit()
         return self.get_tally(tally_name)
+
+    def delete_tally(self, category, item):
+        """Delete the tally record"""
+        conn = sqlite3.connect(self.db)
+        c = conn.cursor()
+        c.execute("DELETE FROM tally WHERE name='%s'" % item)
