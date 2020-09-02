@@ -93,3 +93,31 @@ class TestTally_ho(unittest.TestCase):
 
         category = th.get_category("bugs")
         self.assertEqual(category, '')
+
+    def test_get_multiple_categories(self):
+        categories = ["bugs", "issues"]
+        for category in categories:
+            self.create_category(category, "test.db")
+
+        th = tally_ho.TallyHo("test.db")
+        all_cats = th.get_categories()
+
+        for cat in all_cats:
+            self.assertIsInstance(cat, tuple)
+            self.assertIn(cat.name, categories)
+
+    def test_get_all_tallies(self):
+        tally_names = ["stuck deployments", "missing button"]
+        self.create_category("bugs", "test.db")
+        self.create_category("issues", "test.db")
+        
+        th = tally_ho.TallyHo("test.db")
+        th.create_tally("bugs", "stuck deployments")
+        th.create_tally("issues", "missing button")
+
+        tallies = th.get_tallies()
+
+        for tally in tallies:
+            self.assertIsInstance(tally, tuple)
+            self.assertIn(tally.name, tally_names)
+            self.assertEqual(len(tallies), 2)

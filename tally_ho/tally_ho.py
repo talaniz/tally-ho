@@ -16,7 +16,7 @@ class TallyHo(object):
         """Create a category"""
         conn = sqlite3.connect(self.db)
         c = conn.cursor()
-        c.execute('CREATE TABLE categories (id integer primary key, name varchar)')
+        c.execute('CREATE TABLE IF NOT EXISTS categories (id integer primary key, name varchar)')
         c.execute("insert into categories(name) values (?)", (category,))
         conn.commit()
         c.execute("SELECT * FROM categories WHERE name='%s'" % category)
@@ -28,7 +28,7 @@ class TallyHo(object):
         """Create a tally item under a category."""
         conn = sqlite3.connect(self.db)
         c = conn.cursor()
-        c.execute('''CREATE TABLE tally
+        c.execute('''CREATE TABLE IF NOT EXISTS tally
         (id integer primary key, name varchar, category integer, count integer,
         FOREIGN KEY (category) REFERENCES categories(id))''')
 
@@ -51,6 +51,13 @@ class TallyHo(object):
             tally = Tally(*record)
             return tally
         return ''
+
+    def get_tallies(self):
+        """Return all tallies"""
+        conn = sqlite3.connect(self.db)
+        c = conn.cursor()
+        c.execute('SELECT * FROM tally')
+        return [Tally(*record) for record in c.fetchall()]
 
     def update_tally(self, tally_name, interval):
         """Increase or decrease count on a tally."""
@@ -79,6 +86,14 @@ class TallyHo(object):
         if record:
             return Category(*record)
         return ''
+
+    def get_categories(self):
+        """Return all categories"""
+        conn = sqlite3.connect(self.db)
+        c = conn.cursor()
+        c.execute("SELECT * FROM categories")
+        categories = [Category(*record) for record in c.fetchall()]
+        return categories
 
     def delete_category(self, category):
         """Delete the category record"""
