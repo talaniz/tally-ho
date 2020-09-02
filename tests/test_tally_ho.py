@@ -76,3 +76,6 @@ class TestTally_ho(unittest.TestCase):
 
         tally = th.update_tally("stuck deployments", 1)
         self.assertEqual(tally.count, 2)
+
+        tally = th.update_tally("stuck deployments", -2)
+        self.assertEqual(tally.count, 0)
