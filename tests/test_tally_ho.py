@@ -13,44 +13,28 @@ class TestTally_ho(unittest.TestCase):
 
     def create_category(self, category, db_name):
         th = tally_ho.TallyHo(db_name)
-        th.create_category(category)
+        return th.create_category(category)
 
     def tearDown(self):
         os.remove('test.db')
 
     def test_create_category(self):
         """Create a category"""
-        self.create_category("bugs", "test.db")
+        category = self.create_category("issues", "test.db")
 
-        conn = sqlite3.connect('test.db')
-        c = conn.cursor()
-        c.execute("SELECT * FROM categories WHERE name='bugs'")
-
-        records = c.fetchall()
-        first_record = records[0]
-
-        self.assertEqual(len(records), 1)
-        self.assertEqual(first_record[1], 'bugs')
+        self.assertEqual(category.id, 1)
+        self.assertEqual(category.name, 'issues')
 
     def test_create_tally_item(self):
         """Creates a tally item under a category"""
 
         self.create_category("bugs", "test.db")
         th = tally_ho.TallyHo("test.db")
-        th.create_tally("bugs", "stuck deployments")
+        tally = th.create_tally("bugs", "stuck deployments")
 
-        conn = sqlite3.connect('test.db')
-        c = conn.cursor()
-        c.execute("SELECT * FROM tally WHERE name='stuck deployments'")
-
-        records = c.fetchall()
-        first_record = records[0]
-        tally_name = first_record[1]
-        tally_count = first_record[2]
-
-        self.assertEqual(len(records), 1)
-        self.assertEqual(tally_name, 'stuck deployments')
-        self.assertEqual(tally_count, 1)
+        self.assertEqual(tally.id, 1)
+        self.assertEqual(tally.name, 'stuck deployments')
+        self.assertEqual(tally.count, 1)
 
     def test_get_tally(self):
         self.create_category("bugs", "test.db")

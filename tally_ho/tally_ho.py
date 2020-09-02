@@ -3,6 +3,7 @@ from collections import namedtuple
 import sqlite3
 
 Tally = namedtuple("Tally", "id name category count")
+Category = namedtuple("Category", "id name")
 
 
 class TallyHo(object):
@@ -18,7 +19,10 @@ class TallyHo(object):
         c.execute('CREATE TABLE categories (id integer primary key, name varchar)')
         c.execute("insert into categories(name) values (?)", (category,))
         conn.commit()
+        c.execute("SELECT * FROM categories WHERE name='%s'" % category)
+        record = c.fetchone()
         c.close()
+        return Category(*record)
 
     def create_tally(self, category, item):
         """Create a tally item under a category."""
@@ -34,6 +38,7 @@ class TallyHo(object):
         c.execute(
             '''insert into tally(name, category, count) values (?, ?, ?)''', (item, category_id, 1,))
         conn.commit()
+        return self.get_tally(item)
 
     def get_tally(self, tally_name):
         """Retrieve a tally record"""
