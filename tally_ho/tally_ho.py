@@ -79,3 +79,10 @@ class TallyHo(object):
         if record:
             return Category(*record)
         return ''
+
+    def delete_category(self, category):
+        """Delete the category record"""
+        conn = sqlite3.connect(self.db)
+        c = conn.cursor()
+        c.execute("DELETE FROM categories WHERE name='%s'" % category)
+        conn.commit()

@@ -80,3 +80,16 @@ class TestTally_ho(unittest.TestCase):
         category = th.get_category("bugs")
         self.assertEqual(category.id, 1)
         self.assertEqual(category.name, "bugs")
+
+    def test_delete_category(self):
+        self.create_category("bugs", "test.db")
+        th = tally_ho.TallyHo("test.db")
+
+        category = th.get_category("bugs")
+        self.assertEqual(category.id, 1)
+        self.assertEqual(category.name, "bugs")
+
+        th.delete_category("bugs")
+
+        category = th.get_category("bugs")
+        self.assertEqual(category, '')
