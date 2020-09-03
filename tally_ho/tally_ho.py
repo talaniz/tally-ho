@@ -2,7 +2,7 @@
 from collections import namedtuple
 import sqlite3
 
-from tally_ho.exceptions import DuplicateCategoryException
+from tally_ho.exceptions import DuplicateCategoryException, DuplicateTallyException
 
 
 Tally = namedtuple("Tally", "id name category count")
@@ -39,13 +39,18 @@ class TallyHo(object):
         (id integer primary key, name varchar, category integer, count integer,
         FOREIGN KEY (category) REFERENCES categories(id))''')
 
-        c.execute("""SELECT id from categories where name='%s'""" % category)
-        category_id = c.fetchone()[0]
+        tally = self.get_tally(item)
 
-        c.execute(
-            '''insert into tally(name, category, count) values (?, ?, ?)''', (item, category_id, 1,))
-        conn.commit()
-        return self.get_tally(item)
+        if tally == '':
+            c.execute("""SELECT id from categories where name='%s'""" % category)
+            category_id = c.fetchone()[0]
+
+            c.execute(
+                '''insert into tally(name, category, count) values (?, ?, ?)''', (item, category_id, 1,))
+            conn.commit()
+            return self.get_tally(item)
+        else:
+            raise DuplicateTallyException("Existing Tally:\n\tName: {}\n\tCategory: {}\n\tCount: {}".format(tally.name, tally.category, category.count))
 
     def get_tally(self, tally_name):
         """Retrieve a tally record"""

@@ -1,2 +1,6 @@
 class DuplicateCategoryException(Exception):
-    """Exception for creating an existing category."""
+    """Exception indicating a Category of the same name exists."""
+
+
+class DuplicateTallyException(Exception):
+    """Exception for creating a tally that exists under the same category."""

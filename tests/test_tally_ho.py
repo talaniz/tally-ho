@@ -6,7 +6,7 @@ import sqlite3
 import unittest
 
 from tally_ho import tally_ho
-from tally_ho.exceptions import DuplicateCategoryException
+from tally_ho.exceptions import DuplicateCategoryException, DuplicateTallyException
 
 
 class TestTally_ho(unittest.TestCase):
@@ -15,6 +15,10 @@ class TestTally_ho(unittest.TestCase):
     def create_category(self, category, db_name):
         th = tally_ho.TallyHo(db_name)
         return th.create_category(category)
+
+    def create_tally(self, category, name, db_name):
+        th = tally_ho.TallyHo(db_name)
+        return th.create_tally(category, name)
 
     def tearDown(self):
         os.remove('test.db')
@@ -30,8 +34,7 @@ class TestTally_ho(unittest.TestCase):
         """Creates a tally item under a category"""
 
         self.create_category("bugs", "test.db")
-        th = tally_ho.TallyHo("test.db")
-        tally = th.create_tally("bugs", "stuck deployments")
+        tally = self.create_tally("bugs", "stuck deployments", "test.db")
 
         self.assertEqual(tally.id, 1)
         self.assertEqual(tally.name, 'stuck deployments')
@@ -39,9 +42,9 @@ class TestTally_ho(unittest.TestCase):
 
     def test_get_tally(self):
         self.create_category("bugs", "test.db")
-        th = tally_ho.TallyHo("test.db")
-        th.create_tally("bugs", "stuck deployments")
+        self.create_tally("bugs", "stuck deployments", "test.db")
 
+        th = tally_ho.TallyHo("test.db")
         tally = th.get_tally("stuck deployments")
         self.assertEqual(tally.id, 1)
         self.assertEqual(tally.name, "stuck deployments")
@@ -50,9 +53,9 @@ class TestTally_ho(unittest.TestCase):
 
     def test_update_tally(self):
         self.create_category("bugs", "test.db")
-        th = tally_ho.TallyHo("test.db")
-        th.create_tally("bugs", "stuck deployments")
+        self.create_tally("bugs", "stuck deployments", "test.db")
 
+        th = tally_ho.TallyHo("test.db")
         tally = th.get_tally("stuck deployments")
         self.assertEqual(tally.id, 1)
         self.assertEqual(tally.name, "stuck deployments")
@@ -67,18 +70,20 @@ class TestTally_ho(unittest.TestCase):
 
     def test_delete_tally(self):
         self.create_category("bugs", "test.db")
-        th = tally_ho.TallyHo("test.db")
-        tally = th.create_tally("bugs", "stuck deployments")
+        self.create_tally("bugs", "stuck deployments", "test.db")
 
+
+        th = tally_ho.TallyHo("test.db")
         th.delete_tally("bugs", "stuck deployments")
         tally = th.get_tally("stuck deployments")
         self.assertEqual(tally, '')
 
     def test_get_category(self):
         self.create_category("bugs", "test.db")
-        th = tally_ho.TallyHo("test.db")
 
+        th = tally_ho.TallyHo("test.db")
         category = th.get_category("bugs")
+
         self.assertEqual(category.id, 1)
         self.assertEqual(category.name, "bugs")
 
@@ -108,6 +113,7 @@ class TestTally_ho(unittest.TestCase):
             self.assertIn(cat.name, categories)
 
     def test_get_all_tallies(self):
+        # TODO: Make this more simple
         tally_names = ["stuck deployments", "missing button"]
         self.create_category("bugs", "test.db")
         self.create_category("issues", "test.db")
@@ -128,3 +134,10 @@ class TestTally_ho(unittest.TestCase):
 
         with self.assertRaises(DuplicateCategoryException):
             self.create_category("bugs", "test.db")
+
+    def test_raises_duplicate_tally_exception(self):
+        self.create_category("bugs", "test.db")
+        self.create_tally("bugs", "stuck deployments", "test.db")
+
+        with self.assertRaises(DuplicateTallyException):
+            self.create_tally("bugs", "stuck deployments", "test.db")
