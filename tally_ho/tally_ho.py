@@ -2,6 +2,9 @@
 from collections import namedtuple
 import sqlite3
 
+from tally_ho.exceptions import DuplicateCategoryException
+
+
 Tally = namedtuple("Tally", "id name category count")
 Category = namedtuple("Category", "id name")
 
@@ -16,9 +19,13 @@ class TallyHo(object):
         """Create a category"""
         conn = sqlite3.connect(self.db)
         c = conn.cursor()
-        c.execute('CREATE TABLE IF NOT EXISTS categories (id integer primary key, name varchar)')
-        c.execute("insert into categories(name) values (?)", (category,))
-        conn.commit()
+        c.execute('CREATE TABLE IF NOT EXISTS categories (id integer primary key, name varchar, UNIQUE (name))')
+
+        try:
+            c.execute("insert into categories(name) values (?)", (category,))
+            conn.commit()
+        except sqlite3.IntegrityError:
+            raise DuplicateCategoryException("Another record with this name already exists")
         c.execute("SELECT * FROM categories WHERE name='%s'" % category)
         record = c.fetchone()
         c.close()

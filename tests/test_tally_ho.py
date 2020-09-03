@@ -6,6 +6,7 @@ import sqlite3
 import unittest
 
 from tally_ho import tally_ho
+from tally_ho.exceptions import DuplicateCategoryException
 
 
 class TestTally_ho(unittest.TestCase):
@@ -121,3 +122,9 @@ class TestTally_ho(unittest.TestCase):
             self.assertIsInstance(tally, tuple)
             self.assertIn(tally.name, tally_names)
             self.assertEqual(len(tallies), 2)
+
+    def test_raises_duplicate_category_exception(self):
+        self.create_category("bugs", "test.db")
+
+        with self.assertRaises(DuplicateCategoryException):
+            self.create_category("bugs", "test.db")
