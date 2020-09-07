@@ -31,32 +31,35 @@ class TallyHo(object):
         c.close()
         return Category(*record)
 
-    def create_tally(self, category, item):
-        """Create a tally item under a category."""
+    def create_tally(self, category, name):
+        """Create a tally name under a category."""
         conn = sqlite3.connect(self.db)
         c = conn.cursor()
         c.execute('''CREATE TABLE IF NOT EXISTS tally
         (id integer primary key, name varchar, category integer, count integer,
         FOREIGN KEY (category) REFERENCES categories(id))''')
+    
+        tally_cat = self.get_category(category)
+        tally = self.get_tally(name, category)
 
-        tally = self.get_tally(item)
-
-        if tally == '':
-            c.execute("""SELECT id from categories where name='%s'""" % category)
-            category_id = c.fetchone()[0]
-
+        if (tally == '') or (tally.category != tally_cat.id):
+            if isinstance(tally, tuple):
+                print("\nid: {}, name: {}, category: {} \nvs tally_cat: {}".format(tally.id, tally.name, tally.category, tally_cat))
+    
             c.execute(
-                '''insert into tally(name, category, count) values (?, ?, ?)''', (item, category_id, 1,))
+                '''insert into tally(name, category, count) values (?, ?, ?)''', (name, tally_cat.id, 1,))
             conn.commit()
-            return self.get_tally(item)
+            conn.close()
+            return self.get_tally(name, category)
         else:
             raise DuplicateTallyException("Existing Tally:\n\tName: {}\n\tCategory: {}\n\tCount: {}".format(tally.name, tally.category, category.count))
 
-    def get_tally(self, tally_name):
+    def get_tally(self, tally_name, category):
         """Retrieve a tally record"""
         conn = sqlite3.connect(self.db)
         c = conn.cursor()
-        c.execute("SELECT * FROM tally WHERE name='%s'" % tally_name)
+        cat = self.get_category(category)
+        c.execute("SELECT * FROM tally WHERE name=? AND category=?", (tally_name, cat.id,))
         record = c.fetchone()
 
         if record:
@@ -71,16 +74,16 @@ class TallyHo(object):
         c.execute('SELECT * FROM tally')
         return [Tally(*record) for record in c.fetchall()]
 
-    def update_tally(self, tally_name, interval):
+    def update_tally(self, tally_name, tally_categorie, interval):
         """Increase or decrease count on a tally."""
-        tally = self.get_tally(tally_name)
+        tally = self.get_tally(tally_name, tally_categorie)
         count = tally.count + interval
         conn = sqlite3.connect(self.db)
         c = conn.cursor()
         c.execute("""UPDATE tally SET count = ? where id= ?""",
                   (count, tally.id,))
         conn.commit()
-        return self.get_tally(tally_name)
+        return self.get_tally(tally_name, tally_categorie)
 
     def delete_tally(self, category, item):
         """Delete the tally record"""
