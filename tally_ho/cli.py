@@ -2,6 +2,9 @@
 import argparse
 import sys
 
+from tally_ho import tally_ho
+from tally_ho.cmd import Command, process_cli_cmds
+
 
 def main():
     """Console script for tally_ho.
@@ -24,12 +27,17 @@ def main():
     
     args = parser.parse_args()
 
+    db = "tally.db"
+    th = tally_ho.TallyHo(db)
 
-    print("Results:\n")
-    print("item: " + str(args.item))
-    print("action: " + str(args.action))
-    print("name: " + str(args.name))
-    print("quantity: " + str(args.quantity))
+    item = str(args.item)
+    action = str(args.action)
+    name = str(args.name)
+    quantity = str(args.quantity)
+
+    cmd = Command(item, action, name, quantity, th)
+    process_cli_cmds(cmd)
+    
 
     return 0
 
