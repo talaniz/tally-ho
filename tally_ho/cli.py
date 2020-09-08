@@ -21,8 +21,9 @@ def main():
     parser = argparse.ArgumentParser(description="A python based cli for creating tallies.")
     parser.add_argument('item', nargs='?', choices=['category', 'tally'], help='Interact with categories')
     parser.add_argument('action', nargs='?', choices=[
-                        'create', 'update', 'delete'], help='Interact with tallies')
+                        'create', 'get', 'list', 'update', 'delete'], help='Interact with tallies')
     parser.add_argument('--name', nargs='?', help='Name of category or tally')
+    parser.add_argument('--category', nargs='?', help='Name of a category to associate with a tally')
     parser.add_argument('--quantity', nargs='?', type=int, help='Amount to increase or decrease. Negative or positive integer')
     
     args = parser.parse_args()
@@ -33,6 +34,7 @@ def main():
     item = str(args.item)
     action = str(args.action)
     name = str(args.name)
+    category = str(args.category)
     quantity = str(args.quantity)
 
     cmd = Command(item, action, name, quantity, th)

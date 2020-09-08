@@ -43,9 +43,6 @@ class TallyHo(object):
         tally = self.get_tally(name, category)
 
         if (tally == '') or (tally.category != tally_cat.id):
-            if isinstance(tally, tuple):
-                print("\nid: {}, name: {}, category: {} \nvs tally_cat: {}".format(tally.id, tally.name, tally.category, tally_cat))
-    
             c.execute(
                 '''insert into tally(name, category, count) values (?, ?, ?)''', (name, tally_cat.id, 1,))
             conn.commit()
@@ -116,3 +113,4 @@ class TallyHo(object):
         c = conn.cursor()
         c.execute("DELETE FROM categories WHERE name='%s'" % category)
         conn.commit()
+        return self.get_categories()
