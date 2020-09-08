@@ -12,6 +12,9 @@ from tally_ho.exceptions import DuplicateCategoryException, DuplicateTallyExcept
 class TestTally_ho(unittest.TestCase):
     """Tests for `tally_ho` package."""
 
+    def tearDown(self):
+        os.remove('test.db')
+
     def create_category(self, category, db_name):
         th = tally_ho.TallyHo(db_name)
         return th.create_category(category)
@@ -19,9 +22,6 @@ class TestTally_ho(unittest.TestCase):
     def create_tally(self, category, name, db_name):
         th = tally_ho.TallyHo(db_name)
         return th.create_tally(category, name)
-
-    def tearDown(self):
-        os.remove('test.db')
 
     def test_create_category(self):
         """Create a category"""
