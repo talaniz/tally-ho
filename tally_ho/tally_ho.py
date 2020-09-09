@@ -82,11 +82,11 @@ class TallyHo(object):
         conn.commit()
         return self.get_tally(tally_name, tally_categorie)
 
-    def delete_tally(self, category, item):
+    def delete_tally(self, category, tally_name):
         """Delete the tally record"""
         conn = sqlite3.connect(self.db)
         c = conn.cursor()
-        c.execute("DELETE FROM tally WHERE name='%s'" % item)
+        c.execute("DELETE FROM tally WHERE name='%s'" % tally_name)
         conn.commit()
 
     def get_category(self, category):

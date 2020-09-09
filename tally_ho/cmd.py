@@ -15,6 +15,8 @@ def execute_tally_action(cmd):
         return cmd.tally_ho.get_tally(cmd.name, cmd.category)
     elif cmd.action == "list":
         return cmd.tally_ho.get_tallies()
+    elif cmd.action == "delete" and cmd.name is not None and cmd.category is not None:
+        return cmd.tally_ho.delete_tally(cmd.category, cmd.name)
 
 def execute_category_action(cmd):
     """Execute a category based method."""

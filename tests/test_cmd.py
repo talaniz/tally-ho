@@ -122,3 +122,22 @@ class TestTallyCLICmds(unittest.TestCase):
         tally2_result = cmd.process_cli_cmds(get_tallies_cmd)
 
         self.assertEqual(len(tally2_result), 2)
+
+    def test_cli_deletes_tally(self):
+        th = tally_ho.TallyHo('test.db')
+        create_cat_cmd = cmd.Command(
+            "category", "create", "bugs", None, None, th)
+        cmd.process_cli_cmds(create_cat_cmd)
+
+        create_tally_cmd = cmd.Command(
+            "tally", "create", "stuck deployments", "bugs", None, th)
+        cmd.process_cli_cmds(create_tally_cmd)
+
+        tallies = th.get_tallies()
+        self.assertEqual(len(tallies), 1)
+
+        delete_tally_cmd = cmd.Command("tally", "delete", "stuck deployments", "bugs", None, th)
+        cmd.process_cli_cmds(delete_tally_cmd)
+
+        tallies = th.get_tallies()
+        self.assertEqual(len(tallies), 0)
