@@ -37,7 +37,7 @@ def main():
     category = str(args.category)
     quantity = str(args.quantity)
 
-    cmd = Command(item, action, name, quantity, th)
+    cmd = Command(item, action, name, category, quantity, th)
     process_cli_cmds(cmd)
     
 

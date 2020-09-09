@@ -5,8 +5,16 @@ import sqlite3
 from tally_ho.exceptions import DuplicateCategoryException, DuplicateTallyException
 
 
-Tally = namedtuple("Tally", "id name category count")
-Category = namedtuple("Category", "id name")
+class Tally(namedtuple("Tally", ["id", "name", "category", "count"])):
+    """A tally record."""
+
+    def __str__(self):
+        return "Name: {} Category: {} Count: {}".format(self.name, self.category, self.count)
+
+
+class Category(namedtuple("Category", ["id", "name"])):
+    def __str__(self):
+        return "Name: {}".format(self.name)
 
 
 class TallyHo(object):
@@ -71,16 +79,16 @@ class TallyHo(object):
         c.execute('SELECT * FROM tally')
         return [Tally(*record) for record in c.fetchall()]
 
-    def update_tally(self, tally_name, tally_categorie, interval):
+    def update_tally(self, tally_name, tally_category, interval):
         """Increase or decrease count on a tally."""
-        tally = self.get_tally(tally_name, tally_categorie)
+        tally = self.get_tally(tally_name, tally_category)
         count = tally.count + interval
         conn = sqlite3.connect(self.db)
         c = conn.cursor()
         c.execute("""UPDATE tally SET count = ? where id= ?""",
                   (count, tally.id,))
         conn.commit()
-        return self.get_tally(tally_name, tally_categorie)
+        return self.get_tally(tally_name, tally_category)
 
     def delete_tally(self, category, tally_name):
         """Delete the tally record"""
