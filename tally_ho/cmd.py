@@ -11,8 +11,11 @@ class Command(namedtuple("Command", ["item", "action", "tally", "category", "qua
     # To make the conditional in `execute_tally_action` more clear
     @property
     def has_valid_params(self):
+        """Return True if the cmd has the necessary args to execute."""
         if self.item == "tally":
             return self.tally is not None and self.category is not None
+        else:
+            return self.category is None and self.quantity is None
 
 def execute_tally_action(cmd):
     """Execute a tally based action."""
@@ -29,7 +32,7 @@ def execute_category_action(cmd):
     """Execute a category based method."""
     if cmd.action == "create":
         return cmd.tally_ho.create_category(cmd.category)
-    elif cmd.action == None and cmd.category == None and cmd.quantity == None:
+    elif cmd.action == None and cmd.has_valid_params:
         return cmd.tally_ho.get_categories()
     elif cmd.action == "delete" and cmd.category != None:
         return cmd.tally_ho.delete_category(cmd.category)
