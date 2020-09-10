@@ -5,34 +5,34 @@ from collections import namedtuple
 
 from tally_ho import tally_ho
 
-class Command(namedtuple("Command", ["item", "action", "name", "category", "quantity" , "tally_ho"])):
+class Command(namedtuple("Command", ["item", "action", "tally", "category", "quantity" , "tally_ho"])):
     """A cli command."""
 
     # To make the conditional in `execute_tally_action` more clear
     @property
     def has_valid_params(self):
         if self.item == "tally":
-            return self.name is not None and self.category is not None
+            return self.tally is not None and self.category is not None
 
 def execute_tally_action(cmd):
     """Execute a tally based action."""
     if cmd.action == "create" and cmd.has_valid_params:
-        return cmd.tally_ho.create_tally(cmd.category, cmd.name)
+        return cmd.tally_ho.create_tally(cmd.category, cmd.tally)
     elif cmd.action == "get" and cmd.has_valid_params:
-        return cmd.tally_ho.get_tally(cmd.name, cmd.category)
+        return cmd.tally_ho.get_tally(cmd.tally, cmd.category)
     elif cmd.action == "list":
         return cmd.tally_ho.get_tallies()
     elif cmd.action == "delete" and cmd.has_valid_params:
-        return cmd.tally_ho.delete_tally(cmd.category, cmd.name)
+        return cmd.tally_ho.delete_tally(cmd.category, cmd.tally)
 
 def execute_category_action(cmd):
     """Execute a category based method."""
     if cmd.action == "create":
-        return cmd.tally_ho.create_category(cmd.name)
-    elif cmd.action == None and cmd.name == None and cmd.quantity == None:
+        return cmd.tally_ho.create_category(cmd.category)
+    elif cmd.action == None and cmd.category == None and cmd.quantity == None:
         return cmd.tally_ho.get_categories()
-    elif cmd.action == "delete" and cmd.name != None:
-        return cmd.tally_ho.delete_category(cmd.name)
+    elif cmd.action == "delete" and cmd.category != None:
+        return cmd.tally_ho.delete_category(cmd.category)
 
 def process_cli_cmds(cmd):
     """Execute a category or tally method based on user input."""

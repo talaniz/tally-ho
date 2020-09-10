@@ -22,7 +22,7 @@ def main():
     parser.add_argument('item', nargs='?', choices=['category', 'tally'], help='Interact with categories')
     parser.add_argument('action', nargs='?', choices=[
                         'create', 'get', 'list', 'update', 'delete'], help='Interact with tallies')
-    parser.add_argument('--name', nargs='?', help='Name of category or tally')
+    parser.add_argument('--tally', nargs='?', help='Name of category or tally')
     parser.add_argument('--category', nargs='?', help='Name of a category to associate with a tally')
     parser.add_argument('--quantity', nargs='?', type=int, help='Amount to increase or decrease. Negative or positive integer')
     
@@ -33,11 +33,11 @@ def main():
 
     item = str(args.item)
     action = str(args.action)
-    name = str(args.name)
+    tally = str(args.tally)
     category = str(args.category)
     quantity = str(args.quantity)
 
-    cmd = Command(item, action, name, category, quantity, th)
+    cmd = Command(item, action, tally, category, quantity, th)
     process_cli_cmds(cmd)
     
 
