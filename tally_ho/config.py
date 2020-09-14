@@ -26,3 +26,9 @@ def read_config(config_file=CONFIG_FILE):
     config = configparser.ConfigParser()
     config.read(config_file)
     return config.defaults()
+
+def delete_config(config_file=CONFIG_FILE):
+    config = configparser.ConfigParser()
+    config.read(config_file)
+    os.remove(config_file)
+    return config.defaults()

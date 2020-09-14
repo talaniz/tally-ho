@@ -3,7 +3,7 @@ import configparser
 import os
 import unittest
 
-from tally_ho.config import has_config, create_config, read_config
+from tally_ho.config import has_config, create_config, read_config, delete_config
 
 class TestConfigHandler(unittest.TestCase):
 
@@ -12,7 +12,8 @@ class TestConfigHandler(unittest.TestCase):
         self.cfg_file = os.path.join(self.cfg_path, 'tally.ini')
 
     def tearDown(self):
-        os.remove(self.cfg_file)
+        if os.path.exists(self.cfg_file):
+            os.remove(self.cfg_file)
 
     def test_can_create_config(self):
         result = has_config(self.cfg_file)
@@ -37,3 +38,15 @@ class TestConfigHandler(unittest.TestCase):
         settings = read_config(self.cfg_file)
 
         self.assertEqual(settings['db'], 'tally.db')
+
+    def test_can_delete_config(self):
+        result = has_config(self.cfg_file)
+        self.assertEqual(result, False)
+
+        create_config(config_path=self.cfg_path, config_file=self.cfg_file)
+        result = has_config(self.cfg_file)
+
+        delete_config(self.cfg_file)
+
+        result = has_config(self.cfg_file)
+        self.assertEqual(result, False)
