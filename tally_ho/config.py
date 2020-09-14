@@ -15,13 +15,15 @@ class ConfigHandler(object):
         self.db = ''
 
     def has_config(self):
-
+        """Check if the config file exists."""
         if os.path.isfile(self.config_file):
             return True
         return False
 
     def create_config(self, db_name=DB_NAME):
+        """Create config with defaults."""
         config = configparser.ConfigParser()
+        # TODO: make this less hard coded when needed
         config['DEFAULT'] = {'db': db_name}
 
         if not os.path.exists(self.config_path):
@@ -31,11 +33,13 @@ class ConfigHandler(object):
             config.write(config_file)
 
     def read_config(self):
+        """Read the config file, return default settings."""
         config = configparser.ConfigParser()
         config.read(self.config_file)
         return config.defaults()
 
     def delete_config(self):
+        """Delete the config file."""
         config = configparser.ConfigParser()
         config.read(self.config_file)
         os.remove(self.config_file)
