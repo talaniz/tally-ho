@@ -3,24 +3,25 @@ import configparser
 import os
 import unittest
 
-from tally_ho.config import has_config, create_config, read_config, delete_config
+from tally_ho.config import ConfigHandler
 
 class TestConfigHandler(unittest.TestCase):
 
     def setUp(self):
         self.cfg_path = '/tmp'
         self.cfg_file = os.path.join(self.cfg_path, 'tally.ini')
+        self.cfgh = ConfigHandler(self.cfg_path, self.cfg_file)
 
     def tearDown(self):
         if os.path.exists(self.cfg_file):
             os.remove(self.cfg_file)
 
     def test_can_create_config(self):
-        result = has_config(self.cfg_file)
+        result = self.cfgh.has_config()
         self.assertEqual(result, False)
 
-        create_config(config_path=self.cfg_path, config_file=self.cfg_file)
-        result = has_config(self.cfg_file)
+        self.cfgh.create_config()
+        result = self.cfgh.has_config()
 
         self.assertEqual(result, True)
         cfg_parser = configparser.ConfigParser()
@@ -29,24 +30,24 @@ class TestConfigHandler(unittest.TestCase):
         self.assertEqual(db, 'tally.db')
 
     def test_can_read_config(self):
-        result = has_config(self.cfg_file)
+        result = self.cfgh.has_config()
         self.assertEqual(result, False)
 
-        create_config(config_path=self.cfg_path, config_file=self.cfg_file)
-        result = has_config(self.cfg_file)
+        self.cfgh.create_config()
+        result = self.cfgh.has_config()
 
-        settings = read_config(self.cfg_file)
+        settings = self.cfgh.read_config()
 
         self.assertEqual(settings['db'], 'tally.db')
 
     def test_can_delete_config(self):
-        result = has_config(self.cfg_file)
+        result = self.cfgh.has_config()
         self.assertEqual(result, False)
 
-        create_config(config_path=self.cfg_path, config_file=self.cfg_file)
-        result = has_config(self.cfg_file)
+        self.cfgh.create_config()
+        result = self.cfgh.has_config()
 
-        delete_config(self.cfg_file)
+        self.cfgh.delete_config()
 
-        result = has_config(self.cfg_file)
+        result = self.cfgh.has_config()
         self.assertEqual(result, False)
