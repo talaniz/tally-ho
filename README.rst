@@ -3,25 +3,21 @@ tally-ho
 ========
 
 
-.. image:: https://img.shields.io/pypi/v/tally_ho.svg
-        :target: https://pypi.python.org/pypi/tally_ho
+.. image:: https://travis-ci.org/talaniz/tally-ho.svg?branch=master
+    :target: https://travis-ci.org/talaniz/tally-ho
 
-.. image:: https://img.shields.io/travis/talaniz/tally_ho.svg
-        :target: https://travis-ci.com/talaniz/tally-ho
-
-.. image:: https://readthedocs.org/projects/tally-ho/badge/?version=latest
-        :target: https://tally-ho.readthedocs.io/en/latest/?badge=latest
-        :alt: Documentation Status
+.. raw:: html
+    :file: img/coverage.svg
 
 
 
+*What is it?*
 
-A python based tally mechanism
+`tally_ho` is a simple, python based command line interface that creates tallies. The functionality 
+is intentionally kept simple to focus on different aspects of user experience, continuous integration
+and deployment.
 
-
-* Free software: MIT license
-* Documentation: https://tally-ho.readthedocs.io.
-
+This software is free of use under the MIT license
 
 Usage
 -----
