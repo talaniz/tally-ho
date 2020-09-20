@@ -1,18 +1,24 @@
-"""This module is the transaction interface between the cli and the database."""
+"""Module for database reads and writes."""
 from collections import namedtuple
 import sqlite3
 
-from tally_ho.exceptions import DuplicateCategoryException, DuplicateTallyException
+from tally_ho.exceptions import (
+    DuplicateCategoryException,
+    DuplicateTallyException
+)
 
 
 class Tally(namedtuple("Tally", ["id", "name", "category", "count"])):
     """A tally record."""
 
     def __str__(self):
-        return "Name: {} Category: {} Count: {}".format(self.name, self.category, self.count)
+        return "Name: {} Category: {} Count: {}".format(self.name,
+                                                        self.category,
+                                                        self.count)
 
 
 class Category(namedtuple("Category", ["id", "name"])):
+    """A category to assign events."""
     def __str__(self):
         return "Name: {}".format(self.name)
 
@@ -33,7 +39,7 @@ class TallyHo(object):
             c.execute("insert into categories(name) values (?)", (category,))
             conn.commit()
         except sqlite3.IntegrityError:
-            raise DuplicateCategoryException("Another record with this name already exists")
+            raise DuplicateCategoryException("Record already exists")
         c.execute("SELECT * FROM categories WHERE name='%s'" % category)
         record = c.fetchone()
         c.close()
@@ -46,13 +52,15 @@ class TallyHo(object):
         c.execute('''CREATE TABLE IF NOT EXISTS tally
         (id integer primary key, name varchar, category integer, count integer,
         FOREIGN KEY (category) REFERENCES categories(id))''')
-    
+
         tally_cat = self.get_category(category)
         tally = self.get_tally(name, category)
 
         if (tally == '') or (tally.category != tally_cat.id):
             c.execute(
-                '''insert into tally(name, category, count) values (?, ?, ?)''', (name, tally_cat.id, 1,))
+                '''insert into tally(name, category, count) values (?, ?, ?)''', (name,
+                                                                                  tally_cat.id,
+                                                                                  1,))
             conn.commit()
             conn.close()
             return self.get_tally(name, category)

@@ -5,6 +5,7 @@ import unittest
 
 from tally_ho.config import ConfigHandler
 
+
 class TestConfigHandler(unittest.TestCase):
 
     def setUp(self):
@@ -51,3 +52,10 @@ class TestConfigHandler(unittest.TestCase):
 
         result = self.cfgh.has_config()
         self.assertEqual(result, False)
+
+    def test_can_load_config(self):
+        self.assertEqual(self.cfgh.db, '')
+
+        self.cfgh.load_config()
+
+        self.assertEqual(self.cfgh.db, 'tally.db')

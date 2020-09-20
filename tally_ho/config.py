@@ -36,7 +36,9 @@ class ConfigHandler(object):
         """Read the config file, return default settings."""
         config = configparser.ConfigParser()
         config.read(self.config_file)
-        return config.defaults()
+        defaults = config.defaults()
+        self.db = defaults['db']
+        return defaults
 
     def delete_config(self):
         """Delete the config file."""
@@ -44,3 +46,8 @@ class ConfigHandler(object):
         config.read(self.config_file)
         os.remove(self.config_file)
         return config.defaults()
+
+    def load_config(self):
+        if self.has_config() == False:
+            self.create_config()
+        self.read_config()

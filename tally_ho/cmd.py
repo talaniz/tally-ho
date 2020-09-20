@@ -15,7 +15,7 @@ class Command(namedtuple("Command", ["item", "action", "tally", "category", "qua
         if self.item == "tally":
             return self.tally is not None and self.category is not None
         else:
-            return self.category is None and self.quantity is None
+            return self.category is None
 
 def execute_tally_action(cmd):
     """Execute a tally based action."""
@@ -43,3 +43,4 @@ def process_cli_cmds(cmd):
         return execute_category_action(cmd)
     elif cmd.item == "tally":
         return execute_tally_action(cmd)
+

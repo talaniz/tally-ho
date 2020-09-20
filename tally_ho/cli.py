@@ -4,6 +4,7 @@ import sys
 
 from tally_ho import tally_ho
 from tally_ho.cmd import Command, process_cli_cmds
+from tally_ho.config import ConfigHandler
 
 
 def main():
@@ -19,23 +20,30 @@ def main():
     3. Process request
     """
     parser = argparse.ArgumentParser(description="A python based cli for creating tallies.")
-    parser.add_argument('item', nargs='?', choices=['category', 'tally'], help='Interact with categories')
-    parser.add_argument('action', nargs='?', choices=[
+    item_group = parser.add_argument_group('item', description="Interact with tallies and categories")
+    item_group.add_argument('item', nargs='?', choices=[
+                            'category', 'tally'], help='Interact with categories')
+    item_group.add_argument('action', nargs='?', choices=[
                         'create', 'get', 'list', 'update', 'delete'], help='Interact with tallies')
-    parser.add_argument('--tally', nargs='?', help='Name of category or tally')
-    parser.add_argument('--category', nargs='?', help='Name of a category to associate with a tally')
-    parser.add_argument('--quantity', nargs='?', type=int, help='Amount to increase or decrease. Negative or positive integer')
-    
+    item_group.add_argument('--tally', nargs='?',
+                            help='Name of category or tally')
+    item_group.add_argument('--category', nargs='?',
+                            help='Name of a category to associate with a tally')
+    item_group.add_argument('--quantity', nargs='?', type=int,
+                            help='Amount to increase or decrease. Negative or positive integer')
+
     args = parser.parse_args()
-
-    db = "tally.db"
-    th = tally_ho.TallyHo(db)
-
     item = str(args.item)
     action = str(args.action)
     tally = str(args.tally)
     category = str(args.category)
     quantity = str(args.quantity)
+    
+    cfg_handler = ConfigHandler()
+    cfg_handler.load_config()
+
+    db = cfg_handler.db
+    th = tally_ho.TallyHo(db)
 
     cmd = Command(item, action, tally, category, quantity, th)
     process_cli_cmds(cmd)

@@ -2,11 +2,13 @@
 
 """Tests for `tally_ho` package."""
 import os
-import sqlite3
 import unittest
 
 from tally_ho import tally_ho
-from tally_ho.exceptions import DuplicateCategoryException, DuplicateTallyException
+from tally_ho.exceptions import (
+    DuplicateCategoryException,
+    DuplicateTallyException
+)
 
 
 class TestTally_ho(unittest.TestCase):
@@ -72,7 +74,6 @@ class TestTally_ho(unittest.TestCase):
         self.create_category("bugs", "test.db")
         self.create_tally("bugs", "stuck deployments", "test.db")
 
-
         th = tally_ho.TallyHo("test.db")
         th.delete_tally("bugs", "stuck deployments")
         tally = th.get_tally("stuck deployments", "bugs")
@@ -117,7 +118,7 @@ class TestTally_ho(unittest.TestCase):
         tally_names = ["stuck deployments", "missing button"]
         self.create_category("bugs", "test.db")
         self.create_category("issues", "test.db")
-        
+
         th = tally_ho.TallyHo("test.db")
         th.create_tally("bugs", "stuck deployments")
         th.create_tally("issues", "missing button")
@@ -141,10 +142,10 @@ class TestTally_ho(unittest.TestCase):
 
         self.assertEqual(c1.id, 1)
         self.assertEqual(c1.name, "bugs")
-        
+
         self.assertEqual(c2.id, 2)
         self.assertEqual(c2.name, "issues")
-        
+
         t1 = self.create_tally("bugs", "stuck deployments", "test.db")
         t2 = self.create_tally("issues", "stuck deployments", "test.db")
 
