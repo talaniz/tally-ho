@@ -7,7 +7,7 @@ tally-ho
         :target: https://pypi.python.org/pypi/tally_ho
 
 .. image:: https://img.shields.io/travis/talaniz/tally_ho.svg
-        :target: https://travis-ci.com/talaniz/tally_ho
+        :target: https://travis-ci.com/talaniz/tally-ho
 
 .. image:: https://readthedocs.org/projects/tally-ho/badge/?version=latest
         :target: https://tally-ho.readthedocs.io/en/latest/?badge=latest
@@ -23,10 +23,18 @@ A python based tally mechanism
 * Documentation: https://tally-ho.readthedocs.io.
 
 
-Features
---------
+Usage
+-----
 
-* TODO
+Create a category
+`$ tally_ho category create --category bugs`
+
+Create an item to tally
+`$ tally_ho tally create --tally "debugging startup scripts`
+
+Tally an item
+`$ tally_ho tally update --tally "debugging startup scripts" --quantity 1`
+
 
 Credits
 -------
