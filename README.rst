@@ -17,7 +17,7 @@ tally-ho
 is intentionally kept simple to focus on different aspects of user experience, continuous integration
 and deployment.
 
-This software is free of use under the MIT license
+This software is free of use under MIT license
 
 Usage
 -----
