@@ -23,7 +23,7 @@ class TestCLICmds(unittest.TestCase):
             "category", "create", None, name, None, self.th)
         category = cmd.process_cli_cmds(create_cat_cmd)
 
-        self.assertEqual(category.id, 1)
+
         self.assertEqual(category.name, name)
 
     def test_cli_gets_all_categories(self):
