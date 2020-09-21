@@ -7,7 +7,9 @@ import unittest
 from tally_ho import cmd, tally_ho
 
 
-class TestCategoryCLICmds(unittest.TestCase):
+
+
+class TestCLICmds(unittest.TestCase):
 
     def setUp(self):
         self.th = tally_ho.TallyHo('test.db')
@@ -15,26 +17,17 @@ class TestCategoryCLICmds(unittest.TestCase):
     def tearDown(self):
         os.remove('test.db')
 
-    def test_cli_creates_category(self):
+    def create_category(self, name):
+        """Create a category."""
         create_cat_cmd = cmd.Command(
-            "category", "create", None, "bugs", None, self.th)
+            "category", "create", None, name, None, self.th)
         category = cmd.process_cli_cmds(create_cat_cmd)
 
         self.assertEqual(category.id, 1)
-        self.assertEqual(category.name, "bugs")
+        self.assertEqual(category.name, name)
 
     def test_cli_gets_all_categories(self):
-        create_cat_bugs = cmd.Command("category",
-                                      "create",
-                                      None,
-                                      "bugs",
-                                      None,
-                                      self.th
-                                      )
-        category = cmd.process_cli_cmds(create_cat_bugs)
-
-        self.assertEqual(category.id, 1)
-        self.assertEqual(category.name, "bugs")
+        self.create_category("bugs")
 
         get_cat_cmd = cmd.Command("category", None, None, None, None, self.th)
         cat_list = cmd.process_cli_cmds(get_cat_cmd)
@@ -63,18 +56,7 @@ class TestCategoryCLICmds(unittest.TestCase):
         self.assertEqual(second_cat.name, "issues")
 
     def test_cli_deletes_category(self):
-        create_cat_cmd = cmd.Command("category",
-                                     "create",
-                                     None,
-                                     "bugs",
-                                     None,
-                                     self.th
-                                     )
-        category = cmd.process_cli_cmds(create_cat_cmd)
-
-        self.assertEqual(category.id, 1)
-        self.assertEqual(category.name, "bugs")
-
+        self.create_category("bugs")
         delete_cat_cmd = cmd.Command("category",
                                      "delete",
                                      None,
@@ -85,15 +67,6 @@ class TestCategoryCLICmds(unittest.TestCase):
         cat_list = cmd.process_cli_cmds(delete_cat_cmd)
 
         self.assertEqual(len(cat_list), 0)
-
-
-class TestTallyCLICmds(unittest.TestCase):
-
-    def setUp(self):
-        self.th = tally_ho.TallyHo('test.db')
-
-    def tearDown(self):
-        os.remove('test.db')
 
     def test_cli_creates_tally(self):
         create_cat_cmd = cmd.Command("category",
@@ -123,14 +96,7 @@ class TestTallyCLICmds(unittest.TestCase):
         self.assertEqual(tally.count, 1)
 
     def test_cli_gets_single_tally(self):
-        create_cat_cmd = cmd.Command("category",
-                                     "create",
-                                     None,
-                                     "bugs",
-                                     None,
-                                     self.th
-                                     )
-        cmd.process_cli_cmds(create_cat_cmd)
+        self.create_category("bugs")
 
         create_tally_cmd = cmd.Command(
             "tally", "create", "stuck deployments", "bugs", None, self.th)
@@ -151,9 +117,7 @@ class TestTallyCLICmds(unittest.TestCase):
         self.assertEqual(tally_result.count, tally.count)
 
     def test_cli_gets_all_tallies(self):
-        create_cat_cmd = cmd.Command(
-            "category", "create", None, "bugs", None, self.th)
-        cmd.process_cli_cmds(create_cat_cmd)
+        self.create_category("bugs")
 
         create_tally_cmd = cmd.Command(
             "tally", "create", "stuck deployments", "bugs", None, self.th)
@@ -169,9 +133,7 @@ class TestTallyCLICmds(unittest.TestCase):
         self.assertEqual(len(tally2_result), 2)
 
     def test_cli_deletes_tally(self):
-        create_cat_cmd = cmd.Command(
-            "category", "create", None, "bugs", None, self.th)
-        cmd.process_cli_cmds(create_cat_cmd)
+        self.create_category("bugs")
 
         create_tally_cmd = cmd.Command(
             "tally", "create", "stuck deployments", "bugs", None, self.th)
