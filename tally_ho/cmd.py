@@ -31,7 +31,7 @@ def execute_tally_action(cmd):
 def execute_category_action(cmd):
     """Execute a category based method."""
     if cmd.action == "create":
-        return cmd.tally_ho.create_category(cmd.category)
+        return cmd.tally_ho.create_category(cmd.category) 
     elif cmd.action == None and cmd.has_valid_params:
         return cmd.tally_ho.get_categories()
     elif cmd.action == "delete" and cmd.category != None:
@@ -44,3 +44,6 @@ def process_cli_cmds(cmd):
     elif cmd.item == "tally":
         return execute_tally_action(cmd)
 
+def fmt_output(item):
+    if isinstance(item, tally_ho.Category):
+        return [[item.id, item.name]]

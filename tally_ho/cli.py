@@ -10,14 +10,11 @@ from tally_ho.config import ConfigHandler
 def main():
     """Console script for tally_ho.
     ***Next steps: Create the command line implementation
-    ex. `tally-ho category create ${cat}`
-    ex. `tally-ho tally create ${tally}`
-    ex. `tally-ho tally update ${tally} --amount $amt}`
-    ex. `tally-ho category delete ${cat}`
-    ex. `tally-ho tally delete ${tally}`
-    1. Check for correct arguments
-    2. Check for correct configs
-    3. Process request
+    Format output
+    Print tables
+    Functionalize and test argparse setup
+    Create homebrew formula
+    Test, check coverage, tag release
     """
     parser = argparse.ArgumentParser(description="A python based cli for creating tallies.")
     item_group = parser.add_argument_group('item', description="Interact with tallies and categories")
