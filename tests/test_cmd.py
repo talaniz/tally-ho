@@ -206,7 +206,15 @@ class TestCLICmds(unittest.TestCase):
                                        None,
                                        self.th
                                        )
-        tally = cmd.process_cli_cmds(create_tally_cmd)
+        cmd.process_cli_cmds(create_tally_cmd)
+        get_tally_cmd = cmd.Command("tally",
+                                    "get",
+                                    "stuck deployments",
+                                    "bugs",
+                                    None,
+                                    self.th
+                                    )
+        tally = cmd.process_cli_cmds(get_tally_cmd)
         tally = cmd.fmt_output(tally)
 
         self.assertIsInstance(tally, list)
