@@ -50,3 +50,8 @@ def fmt_output(item):
     elif isinstance(item, list) and isinstance(item[0], tally_ho.Category):
         cat_list = [[cat.id, cat.name] for cat in item]
         return cat_list
+    elif isinstance(item, tally_ho.Tally):
+        return [[item.id, item.name, item.category]]
+    elif isinstance(item, list) and isinstance(item[0], tally_ho.Tally):
+        tally_list = [[tally.id, tally.name, tally.category] for tally in item]
+        return tally_list

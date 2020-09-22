@@ -195,3 +195,51 @@ class TestCLICmds(unittest.TestCase):
         self.assertEqual(cat_list[0][1], "bugs")
         self.assertEqual(cat_list[1][0], 2)
         self.assertEqual(cat_list[1][1], "issues")
+
+
+    def test_tally_fmt_ouput(self):
+        self.create_category("bugs")
+        create_tally_cmd = cmd.Command("tally",
+                                       "create",
+                                       "stuck deployments",
+                                       "bugs",
+                                       None,
+                                       self.th
+                                       )
+        tally = cmd.process_cli_cmds(create_tally_cmd)
+        tally = cmd.fmt_output(tally)
+
+        self.assertIsInstance(tally, list)
+        self.assertEqual(len(tally), 1)
+        self.assertEqual(tally[0][0], 1)
+        self.assertEqual(tally[0][1], "stuck deployments")
+        self.assertEqual(tally[0][2], 1)
+
+        create_tally_cmd2 = cmd.Command("tally",
+                                       "create",
+                                       "slow page load",
+                                       "bugs",
+                                       None,
+                                       self.th
+                                       )
+        tally2 = cmd.process_cli_cmds(create_tally_cmd2)
+        tally2 = cmd.fmt_output(tally2)
+
+        self.assertIsInstance(tally2, list)
+        self.assertEqual(len(tally2), 1)
+        self.assertEqual(tally2[0][0], 2)
+        self.assertEqual(tally2[0][1], "slow page load")
+        self.assertEqual(tally2[0][2], 1)
+
+        get_tallies_cmd = cmd.Command(
+            "tally", "list", None, None, None, self.th)
+        tally_list = cmd.process_cli_cmds(get_tallies_cmd)
+    
+        self.assertIsInstance(tally_list, list)
+        self.assertEqual(len(tally_list), 2)
+        self.assertEqual(tally_list[0][0], 1)
+        self.assertEqual(tally_list[0][1], "stuck deployments")
+        self.assertEqual(tally_list[0][2], 1)
+        self.assertEqual(tally_list[1][0], 2)
+        self.assertEqual(tally_list[1][1], "slow page load")
+        self.assertEqual(tally_list[1][2], 1)
