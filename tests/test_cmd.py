@@ -155,7 +155,7 @@ class TestCLICmds(unittest.TestCase):
         tallies = self.th.get_tallies()
         self.assertEqual(len(tallies), 0)
 
-    def test_create_cat_fmt_ouput(self):
+    def test_cat_fmt_ouput(self):
         create_cat_cmd = cmd.Command("category",
                                      "create",
                                      None,
@@ -170,3 +170,28 @@ class TestCLICmds(unittest.TestCase):
         self.assertEqual(len(category), 1)
         self.assertEqual(category[0][0], 1)
         self.assertEqual(category[0][1], "bugs")
+
+        create_cat_cmd = cmd.Command("category",
+                                     "create",
+                                     None,
+                                     "issues",
+                                     None,
+                                     self.th
+                                     )
+        category = cmd.process_cli_cmds(create_cat_cmd)
+        category = cmd.fmt_output(category)
+
+        self.assertIsInstance(category, list)
+        self.assertEqual(len(category), 1)
+        self.assertEqual(category[0][0], 2)
+        self.assertEqual(category[0][1], "issues")
+
+        get_cat_cmd = cmd.Command("category", None, None, None, None, self.th)
+        cat_list = cmd.process_cli_cmds(get_cat_cmd)
+
+        self.assertIsInstance(cat_list, list)
+        self.assertEqual(len(cat_list), 2)
+        self.assertEqual(cat_list[0][0], 1)
+        self.assertEqual(cat_list[0][1], "bugs")
+        self.assertEqual(cat_list[1][0], 2)
+        self.assertEqual(cat_list[1][1], "issues")

@@ -3,7 +3,7 @@ import argparse
 import sys
 
 from tally_ho import tally_ho
-from tally_ho.cmd import Command, process_cli_cmds
+from tally_ho.cmd import Command, process_cli_cmds, fmt_output
 from tally_ho.config import ConfigHandler
 
 
@@ -43,8 +43,8 @@ def main():
     th = tally_ho.TallyHo(db)
 
     cmd = Command(item, action, tally, category, quantity, th)
-    process_cli_cmds(cmd)
-    
+    res = process_cli_cmds(cmd)
+    res = fmt_output(res)
 
     return 0
 

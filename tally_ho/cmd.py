@@ -47,3 +47,6 @@ def process_cli_cmds(cmd):
 def fmt_output(item):
     if isinstance(item, tally_ho.Category):
         return [[item.id, item.name]]
+    elif isinstance(item, list) and isinstance(item[0], tally_ho.Category):
+        cat_list = [[cat.id, cat.name] for cat in item]
+        return cat_list
