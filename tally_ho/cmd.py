@@ -14,8 +14,6 @@ class Command(namedtuple("Command", ["item", "action", "tally", "category", "qua
         """Return True if the cmd has the necessary args to execute."""
         if self.item == "tally":
             return self.tally is not None and self.category is not None
-        else:
-            return self.category is None
 
 def execute_tally_action(cmd):
     """Execute a tally based action."""
@@ -32,7 +30,8 @@ def execute_category_action(cmd):
     """Execute a category based method."""
     if cmd.action == "create":
         return cmd.tally_ho.create_category(cmd.category) 
-    elif cmd.action == None and cmd.has_valid_params:
+    elif cmd.action == 'None':
+        print('here')
         return cmd.tally_ho.get_categories()
     elif cmd.action == "delete" and cmd.category != None:
         return cmd.tally_ho.delete_category(cmd.category)
@@ -51,7 +50,7 @@ def fmt_output(item):
         cat_list = [[cat.id, cat.name] for cat in item]
         return cat_list
     elif isinstance(item, tally_ho.Tally):
-        return [[item.id, item.name, item.category]]
+        return [[item.id, item.name, item.category, item.count]]
     elif isinstance(item, list) and isinstance(item[0], tally_ho.Tally):
-        tally_list = [[tally.id, tally.name, tally.category] for tally in item]
+        tally_list = [[tally.id, tally.name, tally.category, tally.count] for tally in item]
         return tally_list

@@ -30,7 +30,7 @@ class TestCLICmds(unittest.TestCase):
     def test_cli_gets_all_categories(self):
         self.create_category("bugs")
 
-        get_cat_cmd = cmd.Command("category", None, None, None, None, self.th)
+        get_cat_cmd = cmd.Command("category", 'None', None, None, None, self.th)
         cat_list = cmd.process_cli_cmds(get_cat_cmd)
         first_cat = cat_list[0]
 
@@ -49,7 +49,7 @@ class TestCLICmds(unittest.TestCase):
         self.assertEqual(category.id, 2)
         self.assertEqual(category.name, "issues")
 
-        get_cat_cmd = cmd.Command("category", None, None, None, None, self.th)
+        get_cat_cmd = cmd.Command("category", 'None', None, None, None, self.th)
         cat_list = cmd.process_cli_cmds(get_cat_cmd)
         second_cat = cat_list[1]
 
@@ -186,7 +186,7 @@ class TestCLICmds(unittest.TestCase):
         self.assertEqual(category[0][0], 2)
         self.assertEqual(category[0][1], "issues")
 
-        get_cat_cmd = cmd.Command("category", None, None, None, None, self.th)
+        get_cat_cmd = cmd.Command("category", 'None', None, None, None, self.th)
         cat_list = cmd.process_cli_cmds(get_cat_cmd)
 
         self.assertIsInstance(cat_list, list)
@@ -222,6 +222,7 @@ class TestCLICmds(unittest.TestCase):
         self.assertEqual(tally[0][0], 1)
         self.assertEqual(tally[0][1], "stuck deployments")
         self.assertEqual(tally[0][2], 1)
+        self.assertEqual(tally[0][3], 1)
 
         create_tally_cmd2 = cmd.Command("tally",
                                        "create",
