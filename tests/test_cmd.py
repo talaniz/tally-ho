@@ -270,11 +270,12 @@ class TestArgHandling(unittest.TestCase):
     def tearDown(self):
         os.remove('test.db')
 
-    def test_parse_args_creates_cat_cmd(self):
+    def test_argparse_can_manage_categories(self):
         db = 'test.db'
         create_cat_args = ['category', 'create', '--category', 'bugs']
         create_cat_args2 = ['category', 'create', '--category', 'issues']
         create_cat_args3 = ['category', 'create', '--category', 'db backup']
+
         test_create_cat_cmd = cmd.parse_args(create_cat_args, db)
 
         self.assertIsInstance(test_create_cat_cmd, cmd.Command)
@@ -310,3 +311,12 @@ class TestArgHandling(unittest.TestCase):
 
         self.assertEqual(len(cat_list2), 3)
         self.assertEqual(test_cat3.id, 3)
+
+        delete_cat_args = ['category', 'delete', '--category', 'issues']
+        delete_cat_cmd = cmd.parse_args(delete_cat_args, db)
+        cmd.process_cli_cmds(delete_cat_cmd)
+        cat_list = cmd.process_cli_cmds(test_get_all_cat_cmd)
+
+        self.assertEqual(len(cat_list), 2)
+        self.assertEqual(cat_list[0].id, 1)
+        self.assertEqual(cat_list[1].id, 3)
