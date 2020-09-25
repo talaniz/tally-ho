@@ -320,3 +320,39 @@ class TestArgHandling(unittest.TestCase):
         self.assertEqual(len(cat_list), 2)
         self.assertEqual(cat_list[0].id, 1)
         self.assertEqual(cat_list[1].id, 3)
+
+    def test_argparse_can_manage_tallies(self):
+        db = 'test.db'
+        self.th.create_category('bugs')
+
+        create_tally_args = ['tally', 'create', '--tally', 'stuck deployments', '--category', 'bugs']
+        create_tally_args2 = ['tally', 'create', '--tally', 'slow ui', '--category', 'bugs']
+        create_tally_args3 = ['tally', 'create', '--tally', '404 error', '--category', 'bugs']
+        delete_tally_args = ['tally', 'delete', '--tally', 'slow ui', '--category', 'bugs']
+        get_tally_args = ['tally', 'get', '--tally', 'slow ui', '--category', 'bugs']
+        get_all_tallies_args = ['tally', 'list']
+        create_tally_cmd = cmd.parse_args(create_tally_args, db)
+        tally = cmd.process_cli_cmds(create_tally_cmd)
+
+        self.assertEqual(tally.id, 1)
+        self.assertEqual(tally.name, "stuck deployments")
+        self.assertEqual(tally.count, 1)
+
+        create_tally_cmd2 = cmd.parse_args(create_tally_args2, db)
+        cmd.process_cli_cmds(create_tally_cmd2)
+        create_tally_cmd3 = cmd.parse_args(create_tally_args3, db)
+        cmd.process_cli_cmds(create_tally_cmd3)
+
+        get_tally_cmd = cmd.parse_args(get_tally_args, db)
+        tally_result = cmd.process_cli_cmds(get_tally_cmd)
+
+        self.assertEqual(tally_result.id, 2)
+
+        del_tally_cmd = cmd.parse_args(delete_tally_args, db)
+        cmd.process_cli_cmds(del_tally_cmd)
+
+        get_all_tallies_cmd = cmd.parse_args(get_all_tallies_args, db)
+        tally_result = cmd.process_cli_cmds(get_all_tallies_cmd)
+
+        self.assertEqual(len(tally_result), 2)
+        self.assertEqual(tally_result[1].id, 3)
