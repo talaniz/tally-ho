@@ -17,6 +17,7 @@ def main():
     Create homebrew formula
     Test, check coverage, tag release
     """
+
     parser = argparse.ArgumentParser(description="A python based cli for creating tallies.")
     item_group = parser.add_argument_group('item', description="Interact with tallies and categories")
     item_group.add_argument('item', nargs='?', choices=[
@@ -42,9 +43,8 @@ def main():
 
     db = cfg_handler.db
     th = tally_ho.TallyHo(db)
-
+    # cmd = parse_args(sys.argv, db)
     cmd = Command(item, action, tally, category, quantity, th)
-    print(cmd)
     res = process_cli_cmds(cmd)
     res = fmt_output(res)
     # TODO: add tabulate and print here, then clean up this file

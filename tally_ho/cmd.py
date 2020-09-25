@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 """Module for processing user based requests."""
+import argparse
 from collections import namedtuple
 
 from tally_ho import tally_ho
@@ -31,7 +32,6 @@ def execute_category_action(cmd):
     if cmd.action == "create":
         return cmd.tally_ho.create_category(cmd.category) 
     elif cmd.action == 'None':
-        print('here')
         return cmd.tally_ho.get_categories()
     elif cmd.action == "delete" and cmd.category != None:
         return cmd.tally_ho.delete_category(cmd.category)
@@ -54,3 +54,34 @@ def fmt_output(item):
     elif isinstance(item, list) and isinstance(item[0], tally_ho.Tally):
         tally_list = [[tally.id, tally.name, tally.category, tally.count] for tally in item]
         return tally_list
+
+def _args_or_none(arg):
+    """Return None if the arg is 'None' or the arg."""
+    if arg == 'None':
+        return None
+    return arg
+
+def parse_args(args_list, db):
+    th = tally_ho.TallyHo(db)
+    parser = argparse.ArgumentParser(description="A python based cli for creating tallies.")
+    item_group = parser.add_argument_group('item', description="Interact with tallies and categories")
+    item_group.add_argument('item', nargs='?', choices=[
+                            'category', 'tally'], help='Interact with categories')
+    item_group.add_argument('action', nargs='?', choices=[
+                        'create', 'get', 'list', 'update', 'delete'], help='Interact with tallies')
+    item_group.add_argument('--tally', nargs='?',
+                            help='Name of category or tally')
+    item_group.add_argument('--category', nargs='?',
+                            help='Name of a category to associate with a tally')
+    item_group.add_argument('--quantity', nargs='?', type=int,
+                            help='Amount to increase or decrease. Negative or positive integer')
+
+    args = parser.parse_args(args_list)
+    item = str(args.item)
+    action = str(args.action)
+    tally = _args_or_none(str(args.tally))
+    category = _args_or_none(str(args.category))
+    quantity = _args_or_none(str(args.quantity))
+
+    cmd = Command(item, action, tally, category, quantity, th)
+    return cmd

@@ -252,3 +252,61 @@ class TestCLICmds(unittest.TestCase):
         self.assertEqual(tally_list[1][0], 2)
         self.assertEqual(tally_list[1][1], "slow page load")
         self.assertEqual(tally_list[1][2], 1)
+
+
+class TestArgHandling(unittest.TestCase):
+
+
+    def setUp(self):
+        self.th = tally_ho.TallyHo('test.db')
+        self.create_cat_cmd = cmd.Command("category", "create", None, "bugs", None, self.th)
+        self.get_cat_cmd = cmd.Command("category", 'None', None, None, None, self.th)
+        self.delete_cat_cmd = cmd.Command("category", "delete", None, "bugs", None, self.th)
+        self.create_tally_cmd = cmd.Command("tally", "create", "stuck deployments", "bugs", None, self.th)
+        self.get_tally_cmd = cmd.Command("tally", "get", "stuck deployments", "bugs", None, self.th)
+        self.get_tallies_cmd = cmd.Command("tally", "list", None, None, None, self.th)
+        self.delete_tally_cmd = cmd.Command("tally", "delete", "stuck deployments", "bugs", None,self.th)
+
+    def tearDown(self):
+        os.remove('test.db')
+
+    def test_parse_args_creates_cat_cmd(self):
+        db = 'test.db'
+        create_cat_args = ['category', 'create', '--category', 'bugs']
+        create_cat_args2 = ['category', 'create', '--category', 'issues']
+        create_cat_args3 = ['category', 'create', '--category', 'db backup']
+        test_create_cat_cmd = cmd.parse_args(create_cat_args, db)
+
+        self.assertIsInstance(test_create_cat_cmd, cmd.Command)
+        self.assertIsInstance(test_create_cat_cmd.tally_ho, tally_ho.TallyHo)
+        self.assertEqual(test_create_cat_cmd.item, self.create_cat_cmd.item)
+        self.assertEqual(test_create_cat_cmd.action, self.create_cat_cmd.action)
+        self.assertEqual(test_create_cat_cmd.category, self.create_cat_cmd.category)
+        self.assertEqual(test_create_cat_cmd.quantity, self.create_cat_cmd.quantity)
+
+        category = cmd.process_cli_cmds(test_create_cat_cmd)
+        get_cat_args = ['category', '--category', 'bugs']
+        test_get_cat_cmd = cmd.parse_args(get_cat_args, db)
+
+        test_cat = cmd.process_cli_cmds(test_get_cat_cmd)[0]
+        self.assertEqual(test_cat.id, category.id)
+        self.assertEqual(test_cat.name, category.name)
+
+        create_cat_cmd2 = cmd.parse_args(create_cat_args2, db)
+        cmd.process_cli_cmds(create_cat_cmd2)
+        get_all_cat_args = ['category']
+        test_get_all_cat_cmd = cmd.parse_args(get_all_cat_args, db)
+        cat_list = cmd.process_cli_cmds(test_get_all_cat_cmd)
+        test_cat2 = cat_list[1]
+
+        self.assertEqual(len(cat_list), 2)
+        self.assertEqual(test_cat2.id, 2)
+        self.assertEqual(test_cat2.name, 'issues')
+
+        create_cat_cmd3 = cmd.parse_args(create_cat_args3, db)
+        cmd.process_cli_cmds(create_cat_cmd3)
+        cat_list2 = cmd.process_cli_cmds(test_get_all_cat_cmd)
+        test_cat3 = cat_list2[2]
+
+        self.assertEqual(len(cat_list2), 3)
+        self.assertEqual(test_cat3.id, 3)
